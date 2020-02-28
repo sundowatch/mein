@@ -11,7 +11,14 @@ const _ = require('mein');
 _('Merhabalar Trunçgil Teknoloji').typeof();    // string
 ```
 
+On browser
 
+```html
+<script src="https://cdn.jsdelivr.net/npm/mein"></script>
+<script type="text/javascript">
+_('Merhabalar Trunçgil Teknoloji').typeof();    //string
+</script>
+```
 
 ### Functions
 
