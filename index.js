@@ -272,9 +272,94 @@ tr.prototype.log = function(css='font-size:20px; background-color: #f00; color: 
 }
 
 
-var _ = function(val){
+tr.prototype.now = function(dateSeperator='/', timeSeperator=':'){
+    var objToday = new Date(),
+        weekday = new Array('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+        dayOfWeek = weekday[objToday.getDay()],
+        domEnder = function() { var a = objToday; if (/1/.test(parseInt((a + "").charAt(0)))) return "th"; a = parseInt((a + "").charAt(1)); return 1 == a ? "st" : 2 == a ? "nd" : 3 == a ? "rd" : "th" }(),
+        dayOfMonth = objToday + ( objToday.getDate() < 10) ? '0' + objToday.getDate() + domEnder : objToday.getDate() + domEnder,
+        months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'),
+        curMonth = objToday.getMonth()+1,
+        curYear = objToday.getFullYear(),
+        curHour = objToday.getHours() > 12 ? objToday.getHours() - 12 : (objToday.getHours() < 10 ? "0" + objToday.getHours() : objToday.getHours()),
+        curMinute = objToday.getMinutes() < 10 ? "0" + objToday.getMinutes() : objToday.getMinutes(),
+        curSeconds = objToday.getSeconds() < 10 ? "0" + objToday.getSeconds() : objToday.getSeconds(),
+        curMeridiem = objToday.getHours() > 12 ? "PM" : "AM";
+
+    dayOfMonth = dayOfMonth.replace('th','');
+    if(dayOfMonth.charAt(0) == '0'){
+        dayOfMonth = dayOfMonth.split('');
+        let d = '';
+        for(let i = 0; i < dayOfMonth.length; i++){
+            if(i != 0){
+                d += dayOfMonth[i];
+            }
+        }
+        dayOfMonth = d;
+    }
+    let res = dayOfMonth + dateSeperator + curMonth + dateSeperator + curYear + ' ' + curHour + timeSeperator + curMinute + timeSeperator + curSeconds;
+    return res;
+}
+
+
+
+/**
+ * debug function
+ *
+ * @param {string} [color='white'] - CSS Color
+ * @example
+ * _('Something to print').debug('red');
+ */
+tr.prototype.debug = function(color='white', bgColor = 'transparent', timestamp=true){
+    let timest = '';
+    if(timestamp)
+        timest = '\n' + _().now();
+    console.log("%c" + "DEBUG: " + this.val + '%c'+ timest, "color: " + color + ';background-color:' + bgColor, 'color: #888');
+}
+
+
+
+/**
+ * onScrollToThis
+ *
+ * @param {*} todoCallback - callback function when on scroll - i.e. function(element){}
+ * @param {number} [marginException=0] - margin exception for scroll, recommended 100
+ * @param {*} [willScrollElement=window] - parent and will be scrolled element, it can be window
+ * @example
+    $('#element').onScrollToThis(function(element){
+        console.log(element.attr("id"));
+    }, 100, window);
+ */
+if(typeof $ !== 'undefined'){
+    $.fn.onScrollToThis = function(todoCallback, marginException=0, willScrollElement=window){
+        let win = {
+            w: $(window).width(),
+            h: $(window).height()
+        };
+    
+        let el = $(this);
+    
+        let elTop = el.position();
+        elTop = elTop.top;
+        $(willScrollElement).on('scroll', function(){
+            if(el.attr("onscrolltothis") != "true"){
+                let parentTop = $(this).scrollTop();
+                if(parentTop + win.h + marginException >= elTop){
+                    el.attr("onscrolltothis","true");
+                    todoCallback(el);
+                }
+            }
+        });
+    };
+}
+
+
+
+var _ = function(val=''){
     return new tr(val);
 }
+
+var __ = _();
 
 if (typeof exports !== 'undefined') {
     if(typeof module !== 'undefined' && module.exports){

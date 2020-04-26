@@ -36,4 +36,6 @@ _('Merhabalar Trunçgil Teknoloji').typeof();    //string
 - toArray()
 - toObject()
 - log(css)
+- now()
+- onScrollToThis()
 
